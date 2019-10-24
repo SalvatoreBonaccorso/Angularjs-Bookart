@@ -4,15 +4,24 @@ var myApp = angular.module("myApp",["ngRoute"]);
 myApp.config(function($routeProvider){
 	$routeProvider
 		.when("/books",{
-			templareUrl:"partials/book-list.html",
+			template:"<div id='bookListWrapper'><form role='form'><div class='form-group'><input type='text' class='form-control' placeholder='Search here...'></div></form><div><ul class='list-unstyled'><li class='book' ng-repeat='book in books' style='background: white url(imgs/{{book.imgUrl}}) no-repeat'><div class='book-details clearfix'><h3>{{book.name}}</h3><p>{{book.price}}</p><ul class='list-unstyled list-inline'><li>Rating: {{book.rating}}</li><li>Binding: {{book.binding}}</li><li>Publisher: {{book.publisher}}</li><li>Released: {{book.releaseDate}}</li></ul><p>{{book.details}}</p><button class='btn btn-info pull-right' ng-click='addToKart(book)'>Add to Kart</button></div></li></ul></div></div>",
 			controller:"BookListCtrl"
 		})
 		.when("/kart",{
-			templareUrl:"partials/kart-list.html"
+			template:"<div id='bookListWrapper'><p>Please click on buy button to buy the book.</p><ul class='list-unstyled'><li class='book' ng-repeat='book in kart' style='background: white url(imgs/{{book.imgUrl}}) no-repeat'><div class='book-details clearfix'><h3>{{book.name}}</h3><p>{{book.price}}</p><ul class='list-unstyled list-inline'><li>Rating: {{book.rating}}</li><li>Binding: {{book.binding}}</li><li>Publisher: {{book.publisher}}</li><li>Released: {{book.releaseDate}}</li></ul><p>{{book.details}}</p><button class='btn btn-info pull-right' ng-click='buy(book)'>Buy</button></div></li></ul></div></div>",
+			controller:"KartListCtrl"
 		})
 	.otherwise({
 		redirectTo:"/books"
 	});
+});
+
+myApp.controller("KartListCtrl",function($scope){
+	$scope.kart = [];
+
+	$scope.buy = function(book){
+		console.log("buy", book);
+	}
 });
 
 myApp.controller("HeaderCtrl",function($scope) {
