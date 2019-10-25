@@ -1,37 +1,23 @@
-var myApp = angular.module("myApp",["ngRoute"]);
+var myApp = angular.module("myApp", ["ngRoute","ngAnimate"]);
 
 // configuration the route of application
-myApp.config(function($routeProvider){
+myApp.config(function ($routeProvider) {
 	$routeProvider
-		.when("/books",{
-			template:"<div id='bookListWrapper'><form role='form'><div class='form-group'><input type='text' class='form-control' placeholder='Search here...'></div></form><div><ul class='list-unstyled'><li class='book' ng-repeat='book in books' style='background: white url(imgs/{{book.imgUrl}}) no-repeat'><div class='book-details clearfix'><h3>{{book.name}}</h3><p>{{book.price}}</p><ul class='list-unstyled list-inline'><li>Rating: {{book.rating}}</li><li>Binding: {{book.binding}}</li><li>Publisher: {{book.publisher}}</li><li>Released: {{book.releaseDate}}</li></ul><p>{{book.details}}</p><button class='btn btn-info pull-right' ng-click='addToKart(book)'>Add to Kart</button></div></li></ul></div></div>",
-			controller:"BookListCtrl"
+		.when("/books", {
+			template: "<div id='bookListWrapper'><form role='form'><div class='form-group'><input type='text' class='form-control' placeholder='Search here...' ng-model='searchString'></div></form><div><ul class='list-unstyled'><li class='book' ng-repeat='book in books | filter:searchString' style='background: white url(imgs/{{book.imgUrl}}) no-repeat'><div class='book-details clearfix'><h3>{{book.name}}</h3><p>{{book.price | currency:'€ '}}</p><ul class='list-unstyled list-inline'><li>Rating: {{book.rating}}</li><li>Binding: {{book.binding | uppercase }}</li><li>Publisher: {{book.publisher}}</li><li>Released: {{book.releaseDate}}</li></ul><p>{{book.details}}</p><button class='btn btn-info pull-right' ng-click='addToKart(book)'>Add to Kart</button></div></li></ul></div></div>",
+			controller: "BookListCtrl"
 		})
-		.when("/kart",{
-			template:"<div id='bookListWrapper'><p>Please click on buy button to buy the book.</p><ul class='list-unstyled'><li class='book' ng-repeat='book in kart' style='background: white url(imgs/{{book.imgUrl}}) no-repeat'><div class='book-details clearfix'><h3>{{book.name}}</h3><p>{{book.price}}</p><ul class='list-unstyled list-inline'><li>Rating: {{book.rating}}</li><li>Binding: {{book.binding}}</li><li>Publisher: {{book.publisher}}</li><li>Released: {{book.releaseDate}}</li></ul><p>{{book.details}}</p><button class='btn btn-info pull-right' ng-click='buy(book)'>Buy</button></div></li></ul></div></div>",
-			controller:"KartListCtrl"
+		.when("/kart", {
+			template: "<div id='bookListWrapper'><p>Please click on buy button to buy the book.</p><ul class='list-unstyled'><li class='book' ng-repeat='book in kart' style='background: white url(imgs/{{book.imgUrl}}) no-repeat'><div class='book-details clearfix'><h3>{{book.name}}</h3><p>{{book.price}}</p><ul class='list-unstyled list-inline'><li>Rating: {{book.rating}}</li><li>Binding: {{book.binding}}</li><li>Publisher: {{book.publisher}}</li><li>Released: {{book.releaseDate}}</li></ul><p>{{book.details}}</p><button class='btn btn-info pull-right' ng-click='buy(book)'>Buy</button></div></li></ul></div></div>",
+			controller: "KartListCtrl"
 		})
-	.otherwise({
-		redirectTo:"/books"
-	});
+		.otherwise({
+			redirectTo: "/books"
+		});
 });
 
-myApp.controller("KartListCtrl",function($scope){
-	$scope.kart = [];
-
-	$scope.buy = function(book){
-		console.log("buy", book);
-	}
-});
-
-myApp.controller("HeaderCtrl",function($scope) {
-	$scope.appDetails = {};
-	$scope.appDetails.title = "BooKart";
-	$scope.appDetails.tagline = "We have collection of 1 Million books";
-});
-
-myApp.controller("BookListCtrl",function($scope) {
-	$scope.books = [
+myApp.factory("bookService", function () {
+	var books = [
 		{
 			imgUrl: "adultery.jpeg",
 			name: "Adultery",
@@ -93,8 +79,65 @@ myApp.controller("BookListCtrl",function($scope) {
 			details: "Wings of Fire traces the life and times of India's former president A.P.J. Abdul Kalam. It gives a glimpse of his childhood as well as his growth as India's Missile Man. Summary of the Book Wings... View More"
 		}
 	];
-	
-	$scope.addToKart = function(book) {
-		console.log("add to kart: ", book);
+	return {
+		getBooks: function () {
+			return books;
+		}
 	}
-})
+});
+
+myApp.factory("kartService", function () {
+	var kart = [];
+	return {
+		getKart: function () {
+			return kart;
+		},
+		addToKart: function (book) {
+			kart.push(book);
+		},
+		buy: function (book) {
+			alert("thanks for buying: ", book.name);
+		}
+	}
+
+});
+
+myApp.controller("KartListCtrl", function ($scope, kartService) {
+	$scope.kart = kartService.getKart();
+
+	$scope.buy = function (book) {
+		kartService.buy(book);
+	}
+});
+
+myApp.controller("HeaderCtrl", function ($scope,$location) {
+	$scope.appDetails = {};
+	$scope.appDetails.title = "BooKart";
+	$scope.appDetails.tagline = "We have collection of 1 Million books";
+	$scope.nav={};
+	$scope.nav.isActive = function(path) {
+		if (path === $location.path()) {
+			return true;
+		}
+
+	}
+});
+
+myApp.controller("BookListCtrl", function ($scope, bookService,kartService) {
+
+	$scope.books = bookService.getBooks();
+
+	$scope.addToKart = function (book) {
+		kartService.addToKart(book);
+	}
+ 	// setting the isVisible variable
+	$scope.isVisible = false ;
+	// when the function is called the isVisible variable is set to true
+	$scope.showHide = function () {
+		$scope.isVisible = true ;
+	}
+	$scope.show = function () {
+		$scope.isVisible = false ;
+	}
+});
+
