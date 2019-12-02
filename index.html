@@ -9,20 +9,30 @@
 	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular.js"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular-route.js"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular-animate.js"></script>
+	<script src="bower_components/angular-sticky/dist/angular-sticky.min.js"></script>
 	<script src="app.js"></script>
+	<script type="text/javascript" src="partials/book-list-controller.js"></script>
+	<script type="text/javascript" src="partials/kart-list-controller.js"></script>
+	<script type="text/javascript" src="services/common-services.js"></script>
 </head>
 
 <body>
 	<!-- Logo and NavBar -->
-	<div id="headerWrapper" ng-controller="HeaderCtrl">
+	<div id="headerWrapper" ng-controller="HeaderCtrl" hl-sticky="" class="custom">
 		<span class="logo pull-left">{{appDetails.title}}</span>
 		<span class="tagline pull-left">{{appDetails.tagline}}</span>
 		<div class="nav-wrapper pull-left">
 			<ul class="nav nav-pills">
 				<li ng-class="{active: nav.isActive('/books')}"><a href="#/books">Books</a></li>
-				<li ng-class="{active: nav.isActive('/kart')}""><a href=" #/kart">Kart </a> </li> </ul> </div> </div>
-					<!-- Main content -->
-					<div ng-view class="container"></div>
+				<li ng-class="{active: nav.isActive('/kart')}""><a href=" #/kart">Kart </a></li>
+			</ul> 
+		</div> 
+		<!-- <div hl-sticky="" class="logo pull-left">{{appDetails.title}}</div> -->
+	</div>
+	<!-- Main content -->
+	
+	<div ng-view class="container"></div>
+
 </body>
 
 </html>
